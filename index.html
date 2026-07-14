@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="Created by Touhidul Islam with WOWSlider, Mobile : +88 01787188885, Portfolio: https://zaap.bio/TouhidDesign">
+<title>Matrix PNG Rain</title>
+
+<style>
+/*
+==========================================================
+GLOBAL RESET
+==========================================================
+*/
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html,
+body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:transparent;
+}
+
+/*
+==========================================================
+RAIN CONTAINER
+
+Covers the entire viewport.
+
+pointer-events:none allows users to click through
+the animation.
+==========================================================
+*/
+
+#rain{
+
+    position:fixed;
+
+    inset:0;
+
+    overflow:hidden;
+
+    pointer-events:none;
+
+    z-index:9999;
+
+}
+
+/*
+==========================================================
+ONE COLUMN
+
+Each column contains multiple PNGs stacked vertically.
+
+Only the COLUMN moves.
+==========================================================
+*/
+
+.column{
+
+    position:absolute;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    gap:14px;
+
+    animation-name:fall;
+
+    animation-timing-function:linear;
+
+    animation-iteration-count:infinite;
+
+}
+
+/*
+==========================================================
+PNG SYMBOL
+==========================================================
+*/
+
+.column img{
+
+    display:block;
+
+    width:100%;
+
+    height:auto;
+
+    user-select:none;
+
+    -webkit-user-drag:none;
+
+}
+
+/*
+==========================================================
+COLUMN ANIMATION
+==========================================================
+*/
+
+@keyframes fall{
+
+    from{
+        transform:
+            translateY(-120%)
+            translateX(var(--drift))
+            rotate(var(--column-rotate))
+            scale(var(--scale));
+    }
+
+    to{
+        transform:
+            translateY(calc(100vh + 100%))
+            translateX(var(--drift))
+            rotate(var(--column-rotate))
+            scale(var(--scale));
+    }
+
+}
+
+@keyframes columnGlitch{
+
+    0%,97%,100%{
+        filter:none;
+    }
+
+    98%{
+        transform:
+            translateX(-3px);
+        filter:brightness(2);
+    }
+
+    98.5%{
+        transform:
+            translateX(4px);
+    }
+
+    99%{
+        transform:
+            translateX(-2px);
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="rain"></div>
+
+<script>/*
+==========================================================
+CONFIGURATION
+==========================================================
+*/
+
+const images = [
+
+    "D1.png",
+    "D2.png",
+    "D4.png",
+    "D7.png",
+    "percent.png"
+
+];
+
+const rain = document.getElementById("rain");
+
+/*
+Number of vertical columns
+*/
+
+const columnCount = 30;
+
+/*
+Minimum and maximum symbols in each column
+*/
+
+const minSymbols = 10;
+const maxSymbols = 20;
+
+/*
+==========================================================
+HELPER
+==========================================================
+*/
+
+function random(min,max){
+
+    return Math.random()*(max-min)+min;
+
+}
+
+/*
+==========================================================
+CREATE ONE COLUMN
+==========================================================
+*/
+
+function createColumn(index){
+
+    const column=document.createElement("div");
+
+    column.className="column";
+
+    /*
+    Horizontal position
+    */
+
+    const left=(window.innerWidth/columnCount)*index;
+
+    column.style.left=left+"px";
+
+  /*
+Random appearance
+*/
+
+const iconSize = random(35,75);
+
+column.style.width = iconSize + "px";
+
+// --------------------------------
+// Depth effect
+// --------------------------------
+
+const depth = Math.random();
+
+const scale = 0.85 + depth * 0.25;
+
+column.style.setProperty("--scale", scale);
+
+column.style.setProperty("--drift", `${random(-15,15)}px`);
+column.style.setProperty("--column-rotate", `${random(-4,4)}deg`);
+
+column.style.opacity = 0.2 + depth * 0.8;
+
+column.style.filter = `blur(${(1 - depth) * 2}px)`;
+
+// --------------------------------
+
+column.style.animationDuration = random(6,12) + "s";
+
+column.style.animationDelay = (-random(0,12)) + "s";
+
+    /*
+    Number of symbols
+    */
+
+    const total=Math.floor(random(minSymbols,maxSymbols));
+
+    for(let i=0;i<total;i++){
+
+        const img=document.createElement("img");
+
+        img.src=images[Math.floor(Math.random()*images.length)];
+        // Small random rotation
+img.style.transform =
+    `rotate(${random(-12,12)}deg)
+     translateX(${random(-4,4)}px)`;
+
+// Slight random opacity
+img.style.opacity = random(0.75, 1);
+
+// Tiny brightness variation
+img.style.filter = `brightness(${random(0.9, 1.2)})`;
+
+        column.appendChild(img);
+
+    }
+
+    rain.appendChild(column);
+
+}
+
+
+
+/*
+==========================================================
+BUILD THE RAIN
+==========================================================
+*/
+
+for(let i=0;i<columnCount;i++){
+
+    createColumn(i);
+
+}
+
+</script>
+
+</body>
+</html>
